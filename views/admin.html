@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>RMAX Admin Panel</title>
+  <style>
+    /* gaya gelap dengan emas, mirip index2 */
+    body { background: #0e0b07; color: #ede7d7; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+    .container { max-width: 900px; margin: auto; }
+    h1 { color: #f0b90b; border-bottom: 2px solid #b8933e; padding-bottom: 10px; }
+    .card { background: #1f150a; border: 1px solid #6e542c; border-radius: 10px; padding: 20px; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px; text-align: left; border-bottom: 1px solid #3d2c19; }
+    th { color: #b89e6a; }
+    input[type="number"], select { background: #0a0b0e; border: 1px solid #6e542c; color: #fff; padding: 4px 8px; border-radius: 4px; }
+    button { background: #a83d32; border: 1px solid #c9a84c; color: #ffeec6; padding: 6px 16px; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #c44a3c; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🛠️ Admin Panel RMAX</h1>
+  <div class="card">
+    <h3>⚙️ Game Settings</h3>
+    <div id="settingsList"></div>
+  </div>
+  <div class="card">
+    <h3>👥 Users</h3>
+    <div id="userList"></div>
+  </div>
+</div>
+<script>
+  async function fetchSettings() {
+    const res = await fetch('/admin/settings');
+    const data = await res.json();
+    const container = document.getElementById('settingsList');
+    container.innerHTML = data.map(s => `
+      <div style="border:1px solid #6e542c;padding:10px;margin:8px 0;border-radius:6px;">
+        <strong style="color:#f0b90b;">${s.game_name}</strong>
+        <label>Win Chance (%): <input type="number" value="${s.win_chance}" id="wc_${s.game_name}" step="0.1" min="0" max="100"></label>
+        <label>Min Multiplier: <input type="number" value="${s.multiplier_min}" id="min_${s.game_name}" step="0.1"></label>
+        <label>Max Multiplier: <input type="number" value="${s.multiplier_max}" id="max_${s.game_name}" step="0.1"></label>
+        <label>House Edge (%): <input type="number" value="${s.house_edge}" id="he_${s.game_name}" step="0.1"></label>
+        <label>Active: <select id="act_${s.game_name}">
+          <option value="true" ${s.is_active?'selected':''}>Yes</option>
+          <option value="false" ${!s.is_active?'selected':''}>No</option>
+        </select></label>
+        <button onclick="saveSetting('${s.game_name}')">Save</button>
+      </div>
+    `).join('');
+  }
+
+  async function saveSetting(game) {
+    const data = {
+      win_chance: parseFloat(document.getElementById(`wc_${game}`).value),
+      multiplier_min: parseFloat(document.getElementById(`min_${game}`).value),
+      multiplier_max: parseFloat(document.getElementById(`max_${game}`).value),
+      house_edge: parseFloat(document.getElementById(`he_${game}`).value),
+      is_active: document.getElementById(`act_${game}`).value === 'true'
+    };
+    await fetch(`/admin/settings/${game}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    alert('Saved!');
+  }
+
+  async function fetchUsers() {
+    const res = await fetch('/admin/users');
+    const data = await res.json();
+    const container = document.getElementById('userList');
+    container.innerHTML = `<table>
+      <tr><th>ID</th><th>Name</th><th>Coins</th><th>Provider</th><th>Action</th></tr>
+      ${data.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.name}</td>
+          <td>${u.coins}</td>
+          <td>${u.provider}</td>
+          <td><button onclick="addCoins(${u.id})">+1000</button> <button onclick="addCoins(${u.id}, -1000)">-1000</button></td>
+        </tr>
+      `).join('')}
+    </table>`;
+  }
+
+  async function addCoins(userId, amount = 1000) {
+    await fetch('/admin/user/coins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, amount })
+    });
+    fetchUsers();
+  }
+
+  fetchSettings();
+  fetchUsers();
+</script>
+</body>
+</html>

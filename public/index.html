@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rmax · Mahjong 888</title>
+    <style>
+        /* ===== global reset & base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+            background: #0e0b07;
+            background-image:
+                radial-gradient(circle at 30% 20%, #281f10 0%, #0f0b06 90%);
+            color: #ede7d7;
+        }
+
+        /* ===== header ===== */
+        .header {
+            width: 100%;
+            max-width: 1400px;
+            margin-bottom: 18px;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(180deg, #2b1f0f, #1a1309);
+            border-bottom: 3px solid #b8933e;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 215, 140, 0.15);
+        }
+        .brand {
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #f5e6b0, #dbb86c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+        .brand-sub {
+            font-weight: 600;
+            font-size: 20px;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #ffe398, #c9982b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+
+        /* ===== hamburger ===== */
+        .menu-wrap {
+            position: relative;
+            margin-left: auto;
+        }
+        .hamburger {
+            width: 52px;
+            height: 46px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #7a6132;
+            border-radius: 8px;
+            box-shadow: inset 0 0 6px #0f0b04, 0 2px 5px #000;
+            transition: 0.2s;
+        }
+        .hamburger:hover {
+            background: #3d2c19;
+            border-color: #dbb86c;
+        }
+        .hamburger span {
+            width: 26px;
+            height: 3px;
+            border-radius: 8px;
+            background: linear-gradient(to right, #f5e2a4, #b58d3a);
+            box-shadow: 0 1px 3px #000, 0 0 4px #e6c46a;
+            transition: 0.25s;
+        }
+        .menu-wrap.open .hamburger span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .menu-wrap.open .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-wrap.open .hamburger span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* ===== dropdown akun ===== */
+        .account-drop {
+            position: absolute;
+            top: 58px;
+            right: 0;
+            width: 280px;
+            padding: 14px 14px 18px;
+            background: linear-gradient(145deg, #3d2b18, #1f150a);
+            border: 1px solid #9a7a3a;
+            border-radius: 12px 4px 12px 4px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 220, 150, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: 0.2s ease;
+            z-index: 20;
+        }
+        .menu-wrap.open .account-drop {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .account-title {
+            padding-bottom: 8px;
+            color: #d4b56a;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #68522b;
+        }
+        .login-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(180deg, #352615, #1f150a);
+            border: 1px solid #6d552d;
+            border-radius: 6px;
+            color: #f0e3c6;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: inset 0 1px 0 rgba(255, 220, 150, 0.06), 0 3px 6px #000;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .login-btn:hover {
+            background: linear-gradient(180deg, #4d351d, #2a1c0e);
+            border-color: #dbb86c;
+            color: #fff6db;
+        }
+        .login-btn .icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 6px;
+        }
+        .login-btn .icon.discord {
+            background: #5865f2;
+        }
+        .login-btn .icon svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        /* profile dengan saldo koin */
+        .profile-box {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #6e542c;
+            border-radius: 8px;
+        }
+        .profile-box.show {
+            display: block;
+        }
+        .profile-box .profile-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .profile-box .profile-row img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c9a84c;
+        }
+        .profile-box .profile-row .info {
+            min-width: 0;
+            flex: 1;
+        }
+        .profile-box .profile-row .info .provider {
+            color: #a5864d;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .profile-box .profile-row .info .name {
+            color: #f0dfb0;
+            font-size: 14px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .profile-box .coin-balance {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border: 1px solid #5a4524;
+        }
+        .profile-box .coin-balance .label {
+            font-size: 11px;
+            color: #b89e6a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .profile-box .coin-balance .amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f5d742;
+            text-shadow: 0 0 12px rgba(245, 215, 66, 0.3);
+        }
+        .profile-box .coin-balance .amount .coin-icon {
+            margin-right: 4px;
+        }
+
+        /* ===== banner ===== */
+        .banner {
+            position: relative;
+            width: 92%;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            margin: 12px auto 20px;
+            overflow: hidden;
+            background: #0a0704;
+            border: 6px solid transparent;
+            border-radius: 32px 8px 32px 8px;
+            border-image: linear-gradient(135deg, #d4af37, #6b4f1a, #e3c376, #4f3a16) 1;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.85), 0 0 0 3px #1a1307, 0 0 0 6px #6b4f1a, 0 0 30px #b58d3a;
+        }
+        .banner::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 2px solid rgba(200, 170, 80, 0.4);
+            border-radius: 20px 4px 20px 4px;
+            pointer-events: none;
+            box-shadow: inset 0 0 20px #000;
+        }
+        .banner video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            filter: saturate(1.1) contrast(1.05);
+        }
+
+        /* ===== game section ===== */
+        .game-section {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto 0;
+        }
+        .game-section .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            color: #f0d47a;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 6px #000, 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+        .game-section .title::before,
+        .game-section .title::after {
+            content: '';
+            height: 1px;
+            flex: 1;
+            max-width: 160px;
+            background: linear-gradient(90deg, transparent, #9b7930, #e3c376);
+        }
+        .game-section .title::after {
+            background: linear-gradient(90deg, #e3c376, #9b7930, transparent);
+        }
+        .game-section .title h2 {
+            font-size: 22px;
+            font-weight: 600;
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .game-card {
+            background: linear-gradient(145deg, #412f1b, #1f150a 75%);
+            border: 2px solid #83672f;
+            border-radius: 16px 4px 16px 4px;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 220, 150, 0.1);
+            transition: 0.25s ease;
+            overflow: hidden;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: #dbb86c;
+            box-shadow: 0 16px 28px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+        .game-card .thumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #0d0803;
+            border-bottom: 2px solid #7a6132;
+        }
+        .game-card .thumb img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+        .game-card:hover .thumb img {
+            transform: scale(1.04);
+            filter: brightness(1.08) saturate(1.06);
+        }
+        .game-card .thumb::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 1px solid rgba(200, 170, 80, 0.35);
+            pointer-events: none;
+            box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.6);
+        }
+        .game-card .info {
+            padding: 14px 16px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .game-card .info .name {
+            color: #f3e2b5;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px #000;
+        }
+        .game-card .info .sub {
+            color: #aa9260;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .game-card .info .btn {
+            min-width: 76px;
+            padding: 10px 14px;
+            background: linear-gradient(180deg, #a83d32, #721f1b 50%, #4d1410);
+            border: 1px solid #c9a84c;
+            border-radius: 6px;
+            color: #ffeec6;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 220, 150, 0.2);
+            transition: 0.2s;
+            text-shadow: 0 1px 3px #000;
+        }
+        .game-card .info .btn:hover {
+            background: linear-gradient(180deg, #c44a3c, #872520);
+            border-color: #edcf78;
+            color: #fff9e0;
+        }
+
+        .game-footer {
+            margin-top: 22px;
+            color: #7a6843;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===== responsive ===== */
+        @media (max-width: 700px) {
+            .header {
+                padding: 8px 14px;
+            }
+            .brand {
+                font-size: 20px;
+            }
+            .brand-sub {
+                font-size: 17px;
+            }
+            .banner {
+                border-width: 4px;
+                border-radius: 20px 4px 20px 4px;
+            }
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .game-section {
+                width: 92%;
+            }
+            .game-section .title h2 {
+                font-size: 18px;
+            }
+            .game-section .title::before,
+            .game-section .title::after {
+                max-width: 50px;
+            }
+            .account-drop {
+                width: 240px;
+            }
+        }
+        @media (min-width: 701px) and (max-width: 950px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="brand">Rmax</div>
+        <div class="brand-sub">Mahjong 888</div>
+
+        <div class="menu-wrap" id="menuWrap">
+            <div class="hamburger" id="menuButton">
+                <span></span><span></span><span></span>
+            </div>
+
+            <!-- dropdown akun dengan saldo koin -->
+            <div class="account-drop">
+                <div class="account-title">👤 Akun</div>
+
+                <button class="login-btn" id="googleLogin">
+                    <span class="icon">
+                        <svg viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"/>
+                            <path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.29v2.53A9.75 9.75 0 0 0 12 21.75z"/>
+                            <path fill="#FBBC05" d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.26.31-1.84V7.63H3.29A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.04 4.37l3.25-2.53z"/>
+                            <path fill="#EA4335" d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.83 3.12 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.71 5.38l3.25 2.53C7.31 7.85 9.46 6.13 12 6.13z"/>
+                        </svg>
+                    </span>
+                    <span>Login with Google</span>
+                </button>
+
+                <button class="login-btn" id="discordLogin">
+                    <span class="icon discord">
+                        <svg viewBox="0 0 24 24" fill="white">
+                            <path d="M19.54 5.32A16.6 16.6 0 0 0 15.48 4l-.52 1.05a14.4 14.4 0 0 0-5.92 0L8.52 4a16.7 16.7 0 0 0-4.06 1.32C1.9 9.42 1.2 13.4 1.55 17.32a16.6 16.6 0 0 0 5.04 2.56l1.23-1.68c-.68-.25-1.32-.57-1.92-.94l.47-.36c3.7 1.73 8.01 1.73 11.66 0l.48.36c-.6.37-1.24.69-1.92.94l1.23 1.68a16.6 16.6 0 0 0 5.04-2.56c.41-4.56-.7-8.5-3.32-12zM8.85 15.2c-1.1 0-2-.99-2-2.21s.88-2.22 2-2.22 2 .99 2 2.22-.9 2.21-2 2.21zm6.3 0c-1.1 0-2-.99-2-2.21s.88-2.22 2-2.22 2 .99 2 2.22-.9 2.21-2 2.21z"/>
+                        </svg>
+                    </span>
+                    <span>Login with Discord</span>
+                </button>
+
+                <div class="profile-box" id="profileBox">
+                    <div class="profile-row">
+                        <img id="profileAvatar" src="" alt="avatar" />
+                        <div class="info">
+                            <div class="provider" id="profileProvider"></div>
+                            <div class="name" id="profileName"></div>
+                        </div>
+                    </div>
+                    <div class="coin-balance">
+                        <span class="label">🪙 Saldo Koin</span>
+                        <span class="amount" id="coinBalance">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== BANNER ===== -->
+    <div class="banner">
+        <video autoplay muted loop playsinline>
+            <source src="https://files.catbox.moe/f4pcle.mp4" type="video/mp4" />
+        </video>
+    </div>
+
+    <!-- ===== GAME SECTION ===== -->
+    <section class="game-section">
+        <div class="title">
+            <h2>Play Games</h2>
+        </div>
+
+        <div class="games-grid">
+            <!-- card 1 -->
+            <article class="game-card">
+                <div class="thumb">
+                    <img src="https://files.catbox.moe/5epolo.png" alt="Rmax Flip" />
+                </div>
+                <div class="info">
+                    <div>
+                        <div class="name">Rmax Flip</div>
+                        <div class="sub">Rmax Original</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='flip.html'">MAIN</button>
+                </div>
+            </article>
+
+            <!-- card 2 -->
+            <article class="game-card">
+                <div class="thumb">
+                    <img src="https://files.catbox.moe/w7g0i9.png" alt="Rmax Crypto" />
+                </div>
+                <div class="info">
+                    <div>
+                        <div class="name">Rmax Crypto</div>
+                        <div class="sub">Rmax Original</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='cripto.html'">MAIN</button>
+                </div>
+            </article>
+
+            <!-- card 3 -->
+            <article class="game-card">
+                <div class="thumb">
+                    <img src="https://files.catbox.moe/tgn5b7.png" alt="Rmax Spaceman" />
+                </div>
+                <div class="info">
+                    <div>
+                        <div class="name">Rmax Spaceman</div>
+                        <div class="sub">Rmax Original</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='spsaceman.html'">MAIN</button>
+                </div>
+            </article>
+        </div>
+
+        <div class="game-footer">✨ Rmax Mahjong 888 ✨</div>
+    </section>
+
+    <script>
+        (async function() {
+            // cek user
+            const userRes = await fetch('/api/user', { credentials: 'include' });
+            if (userRes.ok) {
+                const user = await userRes.json();
+                // tampilkan saldo
+                document.getElementById('coinBalance').textContent = user.coins.toLocaleString();
+                // set profile
+                document.getElementById('profileBox').classList.add('show');
+                document.getElementById('profileAvatar').src = user.avatar || 'https://ui-avatars.com/api/?name=Player&background=6e542c&color=fff&size=64';
+                document.getElementById('profileProvider').textContent = user.provider || 'Guest';
+                document.getElementById('profileName').textContent = user.name || 'Player';
+            } else {
+                // belum login, tampilkan tombol login
+                document.querySelectorAll('.login-btn').forEach(btn => btn.style.display = 'flex');
+            }
+        })();
+
+        // playGame untuk tombol MAIN (jika ingin tetap pakai, tapi sekarang kita pakai navigasi langsung)
+        window.playGame = async function(gameName) {
+            const userRes = await fetch('/api/user', { credentials: 'include' });
+            if (!userRes.ok) {
+                alert('Silakan login dulu!');
+                return;
+            }
+            const user = await userRes.json();
+            const winAmount = Math.floor(Math.random() * 150) + 50;
+            const res = await fetch('/api/win', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ game: gameName, amount: winAmount, multiplier: 1 })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById('coinBalance').textContent = data.newBalance.toLocaleString();
+                alert(`🎉 Menang ${winAmount} koin di ${gameName}!`);
+            }
+        };
+
+        // login buttons arahkan ke backend
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+        document.getElementById('discordLogin').addEventListener('click', () => {
+            window.location.href = '/auth/discord';
+        });
+
+        // toggle menu
+        const menuWrap = document.getElementById('menuWrap');
+        const menuButton = document.getElementById('menuButton');
+        menuButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menuWrap.classList.toggle('open');
+        });
+        document.addEventListener('click', function(e) {
+            if (!menuWrap.contains(e.target)) {
+                menuWrap.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

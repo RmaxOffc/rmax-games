@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Rmax Mahjong888</title>
+
+  <style>
+    :root {
+      --background: #1f180a;
+      --primary: #c9b36b;
+      --gold: #f5e44b;
+      --deep-gold: #b89e3a;
+      --jade: #2d5a3d;
+      --red-lacquer: #9e2b25;
+      --dark-wood: #2b1d0e;
+      --light-wood: #5a3d22;
+      --scroll-bg: #fdf5e6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--background);
+      background-image:
+        radial-gradient(
+          circle at 20% 30%,
+          #2a1f10 0%,
+          #160e06 90%
+        );
+
+      font-family:
+        'Georgia',
+        'Times New Roman',
+        'Noto Serif',
+        serif;
+
+      min-height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      padding: 0 0 20px 0;
+    }
+
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 12px 28px;
+
+      background:
+        linear-gradient(
+          180deg,
+          #3a2a18 0%,
+          #2b1d0e 100%
+        );
+
+      border-bottom: 3px solid #b89e3a;
+      border-top: 1px solid #5e4a26;
+
+      box-shadow:
+        0 6px 12px rgba(0,0,0,.6),
+        inset 0 1px 1px rgba(255,215,130,.2);
+
+      margin-bottom: 18px;
+
+      position: relative;
+      z-index: 5;
+
+      height: auto;
+    }
+
+    .container::before {
+      content: "";
+
+      position: absolute;
+
+      top: 3px;
+      left: 12px;
+      right: 12px;
+
+      height: 2px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          #c9a84c,
+          #f5e44b,
+          #c9a84c,
+          transparent
+        );
+
+      border-radius: 50%;
+
+      opacity: .7;
+
+      pointer-events: none;
+    }
+
+    .container::after {
+      content: "";
+
+      position: absolute;
+
+      bottom: 2px;
+      left: 0;
+      right: 0;
+
+      height: 2px;
+
+      background:
+        radial-gradient(
+          ellipse at center,
+          #a08040 0%,
+          transparent 80%
+        );
+
+      opacity: .4;
+
+      pointer-events: none;
+    }
+
+    .judul {
+      display: flex;
+      align-items: baseline;
+
+      gap: 5px;
+
+      color: #f7eac6;
+
+      text-shadow:
+        0 2px 4px #000,
+        0 0 6px #ac8e3c;
+
+      letter-spacing: 2px;
+
+      font-weight: bold;
+
+      flex-shrink: 0;
+    }
+
+    .judul h1 {
+      font-size: 22px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      background:
+        linear-gradient(
+          180deg,
+          #fff3ce 0%,
+          #e6c97a 80%
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+
+      text-shadow:
+        0 2px 5px rgba(0,0,0,.6);
+
+      line-height: 1.2;
+    }
+
+
+    .judul1 {
+      color: var(--gold);
+
+      text-shadow:
+        0 0 8px #ffd966,
+        0 0 14px #b8860b;
+
+      letter-spacing: 1px;
+
+      font-weight: bold;
+
+      flex-shrink: 0;
+    }
+
+    .judul1 h1 {
+      font-size: 22px;
+
+      font-weight: 800;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffe484,
+          #d4a017
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+
+      text-shadow:
+        0 0 10px rgba(255,217,0,.089);
+
+      line-height: 1.2;
+    }
+
+
+    .menu1 {
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 6px;
+
+      cursor: pointer;
+
+      margin-left: auto;
+
+      padding: 8px 12px;
+
+      background:
+        rgba(0,0,0,.35);
+
+      border-radius: 8px;
+
+      border: 1px solid #8b6f3c;
+
+      box-shadow:
+        inset 0 0 5px #1a1205,
+        0 2px 4px black;
+
+      transition: .2s;
+
+      flex-shrink: 0;
+    }
+
+    .menu1:hover {
+      background: #4a321b;
+
+      border-color: #e3c376;
+    }
+
+    .menu1 span {
+      width: 26px;
+      height: 3px;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffe29c,
+          #bc902f
+        );
+
+      border-radius: 10px;
+
+      box-shadow:
+        0 1px 2px black,
+        0 0 4px #ffd966;
+    }
+
+
+    .banner {
+      width: 90%;
+      max-width: 1100px;
+
+      aspect-ratio: 16 / 9;
+
+      position: relative;
+
+      margin: 15px auto 20px;
+
+      padding: 7px;
+
+      border-radius: 40px 12px 40px 12px;
+
+
+      background:
+        linear-gradient(
+          135deg,
+          #f5d76e 0%,
+          #8b6a24 25%,
+          #e3c376 50%,
+          #5a4218 75%,
+          #d4af37 100%
+        );
+
+      box-shadow:
+        0 20px 30px rgba(0,0,0,.8),
+        0 0 0 3px #1a1307,
+        0 0 18px rgba(201,168,76,.7);
+
+
+      overflow: hidden;
+
+      isolation: isolate;
+    }
+
+
+
+    .banner::before {
+      content: "";
+
+      position: absolute;
+
+      inset: 7px;
+
+      background: #0d0803;
+
+
+      border-radius: 33px 5px 33px 5px;
+
+      z-index: 1;
+
+      pointer-events: none;
+    }
+
+
+    .banner::after {
+      content: "";
+
+      position: absolute;
+
+      inset: 14px;
+
+      border: 2px solid
+        rgba(255,220,120,.5);
+
+      border-radius:
+        27px 2px 27px 2px;
+
+      box-shadow:
+        inset 0 0 18px #000;
+
+      z-index: 3;
+
+      pointer-events: none;
+    }
+
+
+    .banner video {
+      position: relative;
+
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      object-fit: cover;
+
+ 
+      border-radius:
+        33px 5px 33px 5px;
+
+      filter:
+        saturate(1.1)
+        contrast(1.05);
+
+      z-index: 2;
+    }
+
+
+    @media (min-width: 1200px) {
+      .banner {
+        max-width: 1100px;
+      }
+    }
+
+
+    @media (max-width: 900px) {
+      .container {
+        padding: 11px 20px;
+      }
+
+      .banner {
+        width: 92%;
+      }
+    }
+
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px 15px;
+      }
+
+      .judul h1,
+      .judul1 h1 {
+        font-size: 18px;
+      }
+
+      .menu1 {
+        padding: 7px 10px;
+      }
+
+      .menu1 span {
+        width: 23px;
+        height: 3px;
+      }
+
+      .banner {
+        width: 94%;
+
+        padding: 5px;
+
+        border-radius:
+          30px 8px 30px 8px;
+
+        box-shadow:
+          0 12px 20px rgba(0,0,0,.8),
+          0 0 0 2px #1a1307,
+          0 0 14px rgba(201,168,76,.7);
+      }
+
+      .banner::before {
+        inset: 5px;
+
+        border-radius:
+          25px 3px 25px 3px;
+      }
+
+      .banner video {
+        border-radius:
+          25px 3px 25px 3px;
+      }
+
+      .banner::after {
+        inset: 10px;
+
+        border-radius:
+          20px 2px 20px 2px;
+      }
+    }
+
+
+    @media (max-width: 380px) {
+      .judul h1,
+      .judul1 h1 {
+        font-size: 16px;
+      }
+
+      .container {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .banner {
+        width: 95%;
+
+        border-radius:
+          25px 7px 25px 7px;
+      }
+
+      .banner::before {
+        border-radius:
+          20px 2px 20px 2px;
+      }
+
+      .banner video {
+        border-radius:
+          20px 2px 20px 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="judul">
+      <h1>Rmax</h1>
+    </div>
+
+    <div class="judul1">
+      <h1>Mahjong 888</h1>
+    </div>
+
+    <div class="menu1" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="banner">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source
+        src="https://files.catbox.moe/f4pcle.mp4"
+        type="video/mp4"
+      >
+    </video>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- style tetap sama -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RMAX · Crypto Trading</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #0a0b0e;
+            color: #e8e6e3;
+            padding: 16px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            width: 100%;
+            max-width: 1300px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #13151a;
+            border-bottom: 2px solid #f0b90b;
+            border-radius: 12px 12px 0 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header .back-btn {
+            color: #848e9c;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 14px;
+            border: 1px solid #2a2d36;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .header .back-btn:hover {
+            background: #1e2128;
+            border-color: #f0b90b;
+            color: #f0b90b;
+        }
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header .logo .icon {
+            font-size: 28px;
+            font-weight: 900;
+            color: #f0b90b;
+        }
+        .header .logo .name {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f0b90b, #f5d742);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .header .logo .sub {
+            font-size: 12px;
+            color: #848e9c;
+            margin-left: 4px;
+        }
+        .header .coin-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 18px 6px 14px;
+            background: #1e2128;
+            border: 1px solid #2a2d36;
+            border-radius: 8px;
+        }
+        .header .coin-display .icon {
+            font-size: 16px;
+        }
+        .header .coin-display .label {
+            font-size: 11px;
+            color: #848e9c;
+        }
+        .header .coin-display .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f0b90b;
+        }
+
+        /* ===== GAME CONTAINER ===== */
+        .game-container {
+            width: 100%;
+            max-width: 1300px;
+            background: #0f1117;
+            padding: 20px;
+            border-radius: 0 0 12px 12px;
+            border-left: 1px solid #2a2d36;
+            border-right: 1px solid #2a2d36;
+            border-bottom: 1px solid #2a2d36;
+        }
+
+        /* ===== MARKET OVERVIEW ===== */
+        .market-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 16px;
+            background: #13151a;
+            border-radius: 10px;
+            border: 1px solid #1e2128;
+            margin-bottom: 16px;
+        }
+        .market-overview .stat {
+            text-align: center;
+        }
+        .market-overview .stat .label {
+            font-size: 10px;
+            color: #848e9c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .market-overview .stat .value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .market-overview .stat .value.green {
+            color: #0ecb81;
+        }
+        .market-overview .stat .value.red {
+            color: #f6465d;
+        }
+        .market-overview .stat .value.gold {
+            color: #f0b90b;
+        }
+        @media (max-width: 700px) {
+            .market-overview {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* ===== ASSET SELECTOR ===== */
+        .asset-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px 16px;
+            background: #13151a;
+            border-radius: 10px;
+            border: 1px solid #1e2128;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+        .asset-selector .asset {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #2a2d36;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .asset-selector .asset:hover {
+            border-color: #f0b90b;
+            background: #1e2128;
+        }
+        .asset-selector .asset.active {
+            border-color: #f0b90b;
+            background: rgba(240, 185, 11, 0.1);
+            box-shadow: 0 0 20px rgba(240, 185, 11, 0.05);
+        }
+        .asset-selector .asset .icon {
+            font-size: 22px;
+        }
+        .asset-selector .asset .info .symbol {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e8e6e3;
+        }
+        .asset-selector .asset .info .price {
+            font-size: 11px;
+            color: #848e9c;
+        }
+        .asset-selector .asset .change {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .asset-selector .asset .change.green {
+            color: #0ecb81;
+            background: rgba(14, 203, 129, 0.15);
+        }
+        .asset-selector .asset .change.red {
+            color: #f6465d;
+            background: rgba(246, 70, 93, 0.15);
+        }
+        .asset-selector .asset .rmx-tag {
+            font-size: 8px;
+            background: #f0b90b;
+            color: #0a0b0e;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-left: 2px;
+        }
+
+        /* ===== CHART ===== */
+        .chart-wrapper {
+            background: #13151a;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #1e2128;
+            margin-bottom: 16px;
+        }
+        .chart-wrapper .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .chart-wrapper .chart-header .price-display {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .chart-wrapper .chart-header .price-display .current {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .chart-wrapper .chart-header .price-display .current.green {
+            color: #0ecb81;
+        }
+        .chart-wrapper .chart-header .price-display .current.red {
+            color: #f6465d;
+        }
+        .chart-wrapper .chart-header .price-display .change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .chart-wrapper .chart-header .price-display .change.green {
+            color: #0ecb81;
+        }
+        .chart-wrapper .chart-header .price-display .change.red {
+            color: #f6465d;
+        }
+        .chart-wrapper .chart-header .price-display .high-low {
+            font-size: 12px;
+            color: #848e9c;
+            display: flex;
+            gap: 12px;
+        }
+        .chart-wrapper .chart-header .price-display .high-low span {
+            font-weight: 600;
+        }
+        .chart-wrapper .chart-header .price-display .high-low .high {
+            color: #0ecb81;
+        }
+        .chart-wrapper .chart-header .price-display .high-low .low {
+            color: #f6465d;
+        }
+        .chart-wrapper .chart-header .timeframes {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .chart-wrapper .chart-header .timeframes button {
+            padding: 4px 14px;
+            background: transparent;
+            border: 1px solid #2a2d36;
+            border-radius: 4px;
+            color: #848e9c;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .chart-wrapper .chart-header .timeframes button:hover {
+            border-color: #f0b90b;
+            color: #e8e6e3;
+        }
+        .chart-wrapper .chart-header .timeframes button.active {
+            border-color: #f0b90b;
+            color: #f0b90b;
+            background: rgba(240, 185, 11, 0.1);
+        }
+        .chart-wrapper canvas {
+            width: 100% !important;
+            height: 350px !important;
+            display: block;
+            border-radius: 6px;
+            background: #0a0b0e;
+        }
+
+        /* ===== TRADING GRID ===== */
+        .trading-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+        }
+        @media (max-width: 860px) {
+            .trading-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== ORDER BOOK ===== */
+        .order-book {
+            background: #13151a;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #1e2128;
+        }
+        .order-book .title {
+            font-size: 11px;
+            color: #848e9c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .order-book .header-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            font-size: 10px;
+            color: #848e9c;
+            padding: 4px 0;
+            border-bottom: 1px solid #1e2128;
+            margin-bottom: 4px;
+        }
+        .order-book .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 3px 0;
+            font-size: 12px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: 0.1s;
+        }
+        .order-book .row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .order-book .row .bid {
+            color: #0ecb81;
+        }
+        .order-book .row .ask {
+            color: #f6465d;
+        }
+        .order-book .row .size {
+            color: #848e9c;
+            text-align: center;
+        }
+        .order-book .row .price {
+            text-align: right;
+        }
+        .order-book .spread {
+            padding: 6px 0;
+            text-align: center;
+            font-size: 11px;
+            color: #848e9c;
+            border-top: 1px solid #1e2128;
+            margin-top: 4px;
+        }
+        .order-book .spread span {
+            color: #f0b90b;
+            font-weight: 600;
+        }
+
+        /* ===== TRADE CONTROLS ===== */
+        .trade-controls {
+            background: #13151a;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #1e2128;
+        }
+        .trade-controls .label {
+            font-size: 11px;
+            color: #848e9c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .trade-controls .amount-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .trade-controls .amount-input input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #0a0b0e;
+            border: 1px solid #2a2d36;
+            border-radius: 6px;
+            color: #e8e6e3;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            min-width: 80px;
+        }
+        .trade-controls .amount-input input:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        .trade-controls .presets {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .trade-controls .presets button {
+            padding: 4px 14px;
+            background: #0a0b0e;
+            border: 1px solid #2a2d36;
+            border-radius: 4px;
+            color: #848e9c;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .trade-controls .presets button:hover {
+            border-color: #f0b90b;
+            color: #e8e6e3;
+        }
+
+        .trade-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .btn-buy {
+            padding: 12px;
+            background: linear-gradient(135deg, #0ecb81, #0aab6a);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-buy:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(14, 203, 129, 0.2);
+        }
+        .btn-buy:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-sell {
+            padding: 12px;
+            background: linear-gradient(135deg, #f6465d, #d63a4f);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-sell:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(246, 70, 93, 0.2);
+        }
+        .btn-sell:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ===== POSITION ===== */
+        .position-panel {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: #0a0b0e;
+            border-radius: 8px;
+            border: 1px solid #1e2128;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .position-panel .stat .label {
+            font-size: 9px;
+            color: #848e9c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .position-panel .stat .value {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .position-panel .stat .value.green {
+            color: #0ecb81;
+        }
+        .position-panel .stat .value.red {
+            color: #f6465d;
+        }
+        .position-panel .stat .value.gold {
+            color: #f0b90b;
+        }
+
+        @media (max-width: 600px) {
+            .position-panel {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ===== RESULT & HISTORY ===== */
+        .result-message {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 10px 0;
+            min-height: 44px;
+        }
+        .result-message.win {
+            color: #0ecb81;
+        }
+        .result-message.lose {
+            color: #f6465d;
+        }
+        .result-message.idle {
+            color: #848e9c;
+        }
+
+        .history {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 8px;
+            background: #0a0b0e;
+            border-radius: 8px;
+            border: 1px solid #1e2128;
+            min-height: 36px;
+            margin-top: 8px;
+        }
+        .history .dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .history .dot.win {
+            background: rgba(14, 203, 129, 0.2);
+            border: 1px solid #0ecb81;
+            color: #0ecb81;
+        }
+        .history .dot.lose {
+            background: rgba(246, 70, 93, 0.2);
+            border: 1px solid #f6465d;
+            color: #f6465d;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0b0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2d36;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f0b90b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="#" class="back-btn">← Kembali</a>
+        <div class="logo">
+            <span class="icon">◆</span>
+            <span class="name">RMAX</span>
+            <span class="sub">Trading</span>
+        </div>
+        <div class="coin-display">
+            <span class="icon">🪙</span>
+            <span class="label">Saldo</span>
+            <span class="amount" id="headerCoin">10.000</span>
+        </div>
+    </header>
+
+    <!-- ===== GAME CONTAINER ===== -->
+    <div class="game-container">
+
+        <!-- MARKET OVERVIEW -->
+        <div class="market-overview">
+            <div class="stat">
+                <div class="label">Market Cap</div>
+                <div class="value gold" id="marketCap">$2.4T</div>
+            </div>
+            <div class="stat">
+                <div class="label">Volume 24h</div>
+                <div class="value" id="volume24h">$68.5B</div>
+            </div>
+            <div class="stat">
+                <div class="label">Dominance</div>
+                <div class="value" id="dominance">RMAX 0.12%</div>
+            </div>
+            <div class="stat">
+                <div class="label">Fear & Greed</div>
+                <div class="value green" id="fearGreed">🟢 72 (Greed)</div>
+            </div>
+        </div>
+
+        <!-- ASSET SELECTOR -->
+        <div class="asset-selector" id="assetSelector">
+            <!-- akan diisi JS -->
+        </div>
+
+        <!-- CHART -->
+        <div class="chart-wrapper">
+            <div class="chart-header">
+                <div class="price-display">
+                    <span class="current green" id="currentPrice">$0.0000</span>
+                    <span class="change green" id="priceChange">+0.0%</span>
+                    <div class="high-low">
+                        <span>H: <span class="high" id="highPrice">0.0000</span></span>
+                        <span>L: <span class="low" id="lowPrice">0.0000</span></span>
+                    </div>
+                </div>
+                <div class="timeframes" id="timeframes">
+                    <button data-range="1m" class="active">1M</button>
+                    <button data-range="5m">5M</button>
+                    <button data-range="15m">15M</button>
+                    <button data-range="1h">1H</button>
+                    <button data-range="4h">4H</button>
+                    <button data-range="1d">1D</button>
+                </div>
+            </div>
+            <canvas id="chartCanvas"></canvas>
+        </div>
+
+        <!-- TRADING GRID -->
+        <div class="trading-grid">
+            <!-- Order Book -->
+            <div class="order-book">
+                <div class="title">
+                    <span>📊 Order Book</span>
+                    <span style="color:#848e9c;font-size:10px;" id="orderPair">RMAX/USDT</span>
+                </div>
+                <div class="header-row">
+                    <span>Price</span>
+                    <span style="text-align:center;">Size</span>
+                    <span style="text-align:right;">Total</span>
+                </div>
+                <div id="orderBook"></div>
+                <div class="spread">
+                    Spread: <span id="spreadDisplay">0.0000</span>
+                </div>
+            </div>
+
+            <!-- Trade Controls -->
+            <div class="trade-controls">
+                <div class="label" id="tradeLabel">💰 Trading RMAX/USDT</div>
+
+                <div class="amount-input">
+                    <input type="number" id="tradeAmount" value="100" min="10" step="10" />
+                    <div class="presets">
+                        <button onclick="setTrade(50)">50</button>
+                        <button onclick="setTrade(100)">100</button>
+                        <button onclick="setTrade(250)">250</button>
+                        <button onclick="setTrade(500)">500</button>
+                        <button onclick="setTrade(1000)">1000</button>
+                    </div>
+                </div>
+
+                <div class="trade-buttons">
+                    <button class="btn-buy" id="buyBtn">📈 BUY</button>
+                    <button class="btn-sell" id="sellBtn">📉 SELL</button>
+                </div>
+
+                <div class="position-panel">
+                    <div class="stat">
+                        <div class="label">Position</div>
+                        <div class="value" id="position">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">Entry</div>
+                        <div class="value" id="entryPrice">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">PnL</div>
+                        <div class="value" id="pnl">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">Win Rate</div>
+                        <div class="value gold" id="winRate">0%</div>
+                    </div>
+                </div>
+
+                <div class="result-message idle" id="resultMessage">📊 Pilih BUY atau SELL</div>
+
+                <div class="history" id="history"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ===== ASSETS =====
+            const ASSETS = [
+                { symbol: 'RMAX', name: 'Rmax Coin', icon: '◆', price: 0.0000472, change: 12.4, decimals: 7 },
+                { symbol: 'BTC', name: 'Bitcoin', icon: '₿', price: 43250, change: 2.4, decimals: 0 },
+                { symbol: 'ETH', name: 'Ethereum', icon: '⟠', price: 2890, change: 1.8, decimals: 0 },
+                { symbol: 'SOL', name: 'Solana', icon: '◎', price: 98.50, change: -0.7, decimals: 2 },
+                { symbol: 'BNB', name: 'BNB', icon: '◆', price: 345.20, change: 3.1, decimals: 2 },
+                { symbol: 'XRP', name: 'Ripple', icon: '✕', price: 0.62, change: -0.4, decimals: 4 },
+                { symbol: 'ADA', name: 'Cardano', icon: '⬡', price: 0.45, change: 1.2, decimals: 4 }
+            ];
+
+            // ===== STATE =====
+            let state = {
+                coins: 10000,
+                tradeAmount: 100,
+                currentAsset: 'RMAX',
+                position: null,
+                entryPrice: 0,
+                totalTrades: 0,
+                totalWins: 0,
+                totalLoses: 0,
+                history: [],
+                isTrading: false,
+                chartData: [],
+                chartRange: '1m',
+                highPrice: 0,
+                lowPrice: Infinity,
+                userId: null
+            };
+
+            // ===== DOM REFS =====
+            const chartCanvas = document.getElementById('chartCanvas');
+            const ctx = chartCanvas.getContext('2d');
+            const headerCoin = document.getElementById('headerCoin');
+            const currentPrice = document.getElementById('currentPrice');
+            const priceChange = document.getElementById('priceChange');
+            const highPrice = document.getElementById('highPrice');
+            const lowPrice = document.getElementById('lowPrice');
+            const tradeAmount = document.getElementById('tradeAmount');
+            const buyBtn = document.getElementById('buyBtn');
+            const sellBtn = document.getElementById('sellBtn');
+            const resultMsg = document.getElementById('resultMessage');
+            const positionEl = document.getElementById('position');
+            const entryPriceEl = document.getElementById('entryPrice');
+            const pnlEl = document.getElementById('pnl');
+            const winRateEl = document.getElementById('winRate');
+            const historyEl = document.getElementById('history');
+            const orderBook = document.getElementById('orderBook');
+            const assetSelector = document.getElementById('assetSelector');
+            const spreadDisplay = document.getElementById('spreadDisplay');
+            const orderPair = document.getElementById('orderPair');
+            const tradeLabel = document.getElementById('tradeLabel');
+
+            // ===== API FUNCTIONS =====
+            async function initGame() {
+                try {
+                    const userRes = await fetch('/api/user', { credentials: 'include' });
+                    if (!userRes.ok) {
+                        alert('Login dulu!');
+                        window.location.href = '/';
+                        return;
+                    }
+                    const user = await userRes.json();
+                    state.userId = user.id;
+                    state.coins = user.coins;
+                    headerCoin.textContent = state.coins.toLocaleString();
+                } catch (e) { console.error(e); }
+            }
+
+            async function placeBet(amount) {
+                const res = await fetch('/api/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'crypto', amount })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error);
+                state.coins = data.newBalance;
+                headerCoin.textContent = state.coins.toLocaleString();
+                return data;
+            }
+
+            async function recordWin(amount, multiplier) {
+                const res = await fetch('/api/win', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'crypto', amount, multiplier })
+                });
+                const data = await res.json();
+                if (data.newBalance !== undefined) {
+                    state.coins = data.newBalance;
+                    headerCoin.textContent = state.coins.toLocaleString();
+                }
+            }
+
+            async function recordLose(betAmount) {
+                await fetch('/api/lose', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'crypto', betAmount })
+                });
+            }
+
+            // ===== ASSET FUNCTIONS =====
+            function getAsset(symbol) { return ASSETS.find(a => a.symbol === symbol) || ASSETS[0]; }
+            function getCurrentAsset() { return getAsset(state.currentAsset); }
+            function formatPrice(price, symbol) {
+                const asset = getAsset(symbol);
+                const dec = asset.decimals || 2;
+                if (dec === 0) return Math.round(price).toLocaleString();
+                if (dec === 7) return price.toFixed(7);
+                return price.toFixed(dec);
+            }
+            function generatePriceForAsset(symbol) {
+                const base = getAsset(symbol);
+                const volatility = base.price * 0.004;
+                const change = (Math.random() - 0.48) * volatility;
+                let newPrice = base.price + change;
+                if (newPrice < 0) newPrice = base.price * 0.5;
+                const dec = base.decimals || 2;
+                return Math.round(newPrice * Math.pow(10, dec)) / Math.pow(10, dec);
+            }
+
+            // ===== RENDER =====
+            function renderAssets() {
+                assetSelector.innerHTML = '';
+                ASSETS.forEach(asset => {
+                    const el = document.createElement('div');
+                    el.className = 'asset' + (asset.symbol === state.currentAsset ? ' active' : '');
+                    const changeClass = asset.change >= 0 ? 'green' : 'red';
+                    const sign = asset.change >= 0 ? '+' : '';
+                    el.innerHTML = `
+                        <span class="icon">${asset.icon}</span>
+                        <div class="info">
+                            <div class="symbol">${asset.symbol}</div>
+                            <div class="price">$${formatPrice(asset.price, asset.symbol)}</div>
+                        </div>
+                        <span class="change ${changeClass}">${sign}${asset.change.toFixed(1)}%</span>
+                    `;
+                    el.addEventListener('click', () => switchAsset(asset.symbol));
+                    assetSelector.appendChild(el);
+                });
+            }
+
+            function switchAsset(symbol) {
+                if (state.isTrading) return;
+                state.currentAsset = symbol;
+                state.chartData = [];
+                state.position = null;
+                state.entryPrice = 0;
+                state.highPrice = 0;
+                state.lowPrice = Infinity;
+                renderAssets();
+                generateChartData();
+                drawChart();
+                updateOrderBook();
+                updatePriceDisplay();
+                updatePosition();
+                updateLabels();
+                resultMsg.className = 'result-message idle';
+                resultMsg.textContent = `📊 ${symbol}/USDT siap trading`;
+            }
+
+            function updateLabels() {
+                const asset = getCurrentAsset();
+                orderPair.textContent = asset.symbol + '/USDT';
+                tradeLabel.textContent = '💰 Trading ' + asset.symbol + '/USDT';
+            }
+
+            // ===== CHART =====
+            function generateChartData() {
+                const asset = getCurrentAsset();
+                let val = asset.price;
+                const points = { '1m': 30, '5m': 60, '15m': 120, '1h': 240, '4h': 480, '1d': 720 } [state.chartRange] || 60;
+                state.chartData = [];
+                const volatility = asset.price * 0.005;
+                const dec = asset.decimals || 2;
+                for (let i = 0; i < points; i++) {
+                    const change = (Math.random() - 0.48) * volatility;
+                    val = val + change;
+                    if (val < 0) val = asset.price * 0.5;
+                    state.chartData.push(Math.round(val * Math.pow(10, dec)) / Math.pow(10, dec));
+                }
+                asset.price = state.chartData[state.chartData.length - 1];
+                updateAssetChange();
+                updateHighLow();
+            }
+
+            function updateAssetChange() {
+                const asset = getCurrentAsset();
+                const first = state.chartData[0] || asset.price;
+                const last = state.chartData[state.chartData.length - 1] || asset.price;
+                const change = ((last - first) / first) * 100;
+                asset.change = Math.round(change * 100) / 100;
+            }
+
+            function updateHighLow() {
+                const data = state.chartData;
+                if (data.length > 0) {
+                    state.highPrice = Math.max(...data);
+                    state.lowPrice = Math.min(...data);
+                    const asset = getCurrentAsset();
+                    highPrice.textContent = formatPrice(state.highPrice, asset.symbol);
+                    lowPrice.textContent = formatPrice(state.lowPrice, asset.symbol);
+                }
+            }
+
+            function drawChart() {
+                const rect = chartCanvas.parentElement.getBoundingClientRect();
+                const w = rect.width - 4, h = 350;
+                chartCanvas.width = w; chartCanvas.height = h;
+                const data = state.chartData;
+                if (data.length < 2) { ctx.clearRect(0, 0, w, h); return; }
+                const min = Math.min(...data) * 0.998, max = Math.max(...data) * 1.002, range = max - min || 1;
+                ctx.clearRect(0, 0, w, h);
+                // grid
+                ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 10; i++) {
+                    const y = (i / 10) * h;
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+                    const priceVal = max - (i / 10) * range;
+                    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+                    ctx.font = '9px monospace';
+                    ctx.textAlign = 'left';
+                    const asset = getCurrentAsset();
+                    ctx.fillText('$' + formatPrice(priceVal, asset.symbol), 4, y - 2);
+                }
+                const isUp = data[data.length - 1] > data[0];
+                const grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, isUp ? 'rgba(14,203,129,0.25)' : 'rgba(246,70,93,0.25)');
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.beginPath();
+                data.forEach((val, i) => {
+                    const x = (i / (data.length - 1)) * w;
+                    const y = h - ((val - min) / range) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+                ctx.fillStyle = grad; ctx.fill();
+                ctx.beginPath();
+                data.forEach((val, i) => {
+                    const x = (i / (data.length - 1)) * w;
+                    const y = h - ((val - min) / range) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.strokeStyle = isUp ? '#0ecb81' : '#f6465d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // candles
+                const candleWidth = Math.min(3, w / data.length * 0.4);
+                data.forEach((val, i) => {
+                    const x = (i / (data.length - 1)) * w;
+                    const y = h - ((val - min) / range) * h;
+                    const prev = i > 0 ? data[i - 1] : val;
+                    const isBull = val > prev;
+                    const bodyTop = isBull ? h - ((val - min) / range) * h : h - ((prev - min) / range) * h;
+                    const bodyBottom = isBull ? h - ((prev - min) / range) * h : h - ((val - min) / range) * h;
+                    ctx.fillStyle = isBull ? '#0ecb81' : '#f6465d';
+                    ctx.fillRect(x - candleWidth / 2, Math.min(bodyTop, bodyBottom), candleWidth, Math.abs(bodyBottom - bodyTop) || 1);
+                    ctx.strokeStyle = isBull ? '#0ecb81' : '#f6465d';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(x, bodyTop);
+                    ctx.lineTo(x, h - ((val - min) / range) * h);
+                    ctx.stroke();
+                });
+                const last = data[data.length - 1];
+                const lastY = h - ((last - min) / range) * h;
+                const asset = getCurrentAsset();
+                ctx.fillStyle = isUp ? '#0ecb81' : '#f6465d';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText('$' + formatPrice(last, asset.symbol), w - 8, lastY - 8);
+                ctx.beginPath();
+                ctx.arc(w - 4, lastY, 4, 0, Math.PI * 2);
+                ctx.fillStyle = isUp ? '#0ecb81' : '#f6465d';
+                ctx.fill();
+            }
+
+            // ===== ORDER BOOK =====
+            function updateOrderBook() {
+                const asset = getCurrentAsset();
+                const price = asset.price;
+                const spread = Math.round(price * 0.0005 * Math.pow(10, 7)) / Math.pow(10, 7);
+                const bidPrice = price - spread;
+                const askPrice = price + spread;
+                spreadDisplay.textContent = '$' + formatPrice(spread, asset.symbol);
+                const bids = [], asks = [];
+                for (let i = 0; i < 8; i++) {
+                    const step = spread * (0.8 + i * 0.1);
+                    const bid = Math.round((bidPrice - i * step) * Math.pow(10, 7)) / Math.pow(10, 7);
+                    const ask = Math.round((askPrice + i * step) * Math.pow(10, 7)) / Math.pow(10, 7);
+                    if (bid > 0) bids.push(bid);
+                    asks.push(ask);
+                }
+                const sizes = ['1,234', '2,456', '3,789', '4,012', '5,234', '6,456', '7,678', '8,901'];
+                const totals = ['1,234', '3,690', '7,479', '11,491', '16,725', '23,181', '30,859', '39,760'];
+                let html = '';
+                for (let i = 5; i >= 0; i--) {
+                    html += `<div class="row"><span class="ask price">${formatPrice(asks[i], asset.symbol)}</span><span class="size">${sizes[i]}</span><span class="size">${totals[i]}</span></div>`;
+                }
+                for (let i = 0; i < 6; i++) {
+                    if (bids[i] > 0) {
+                        html += `<div class="row"><span class="bid price">${formatPrice(bids[i], asset.symbol)}</span><span class="size">${sizes[i]}</span><span class="size">${totals[i]}</span></div>`;
+                    }
+                }
+                orderBook.innerHTML = html;
+            }
+
+            // ===== PRICE DISPLAY =====
+            function updatePriceDisplay() {
+                const asset = getCurrentAsset();
+                const price = asset.price;
+                const change = asset.change;
+                const isUp = change >= 0;
+                currentPrice.textContent = '$' + formatPrice(price, asset.symbol);
+                currentPrice.className = 'current ' + (isUp ? 'green' : 'red');
+                priceChange.textContent = (isUp ? '+' : '') + change.toFixed(1) + '%';
+                priceChange.className = 'change ' + (isUp ? 'green' : 'red');
+            }
+
+            // ===== UPDATE UI =====
+            function updateUI() {
+                headerCoin.textContent = state.coins.toLocaleString();
+                const rate = state.totalTrades > 0 ? Math.round((state.totalWins / state.totalTrades) * 100) : 0;
+                winRateEl.textContent = rate + '%';
+                historyEl.innerHTML = '';
+                const recent = state.history.slice(-20);
+                recent.forEach(r => {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot ' + r;
+                    dot.textContent = r === 'win' ? '✓' : '✗';
+                    historyEl.appendChild(dot);
+                });
+            }
+
+            function updatePosition() {
+                const pos = state.position;
+                if (pos) {
+                    positionEl.textContent = pos.toUpperCase();
+                    const asset = getCurrentAsset();
+                    entryPriceEl.textContent = '$' + formatPrice(state.entryPrice, asset.symbol);
+                    const current = getCurrentAsset().price;
+                    const diff = pos === 'buy' ? current - state.entryPrice : state.entryPrice - current;
+                    const pnlPercent = ((diff / state.entryPrice) * 100);
+                    const pnl = Math.round(pnlPercent * 100) / 100;
+                    pnlEl.textContent = (pnl > 0 ? '+' : '') + pnl + '%';
+                    pnlEl.className = 'value ' + (pnl > 0 ? 'green' : 'red');
+                } else {
+                    positionEl.textContent = '-';
+                    entryPriceEl.textContent = '-';
+                    pnlEl.textContent = '-';
+                    pnlEl.className = 'value';
+                }
+            }
+
+            // ===== TRADING =====
+            async function executeTrade(type) {
+                if (state.isTrading) return;
+                const amount = parseInt(tradeAmount.value) || 100;
+                if (amount < 10) { alert('Minimal trade 10 koin!'); return; }
+                if (amount > state.coins) { alert('Saldo tidak cukup!'); return; }
+
+                // Panggil bet
+                try {
+                    await placeBet(amount);
+                } catch (err) {
+                    alert(err.message);
+                    return;
+                }
+
+                state.tradeAmount = amount;
+                state.isTrading = true;
+                buyBtn.disabled = true;
+                sellBtn.disabled = true;
+                resultMsg.className = 'result-message idle';
+                resultMsg.textContent = '⏳ Processing...';
+                const currentPrice = getCurrentAsset().price;
+                state.entryPrice = currentPrice;
+                state.position = type;
+                updatePosition();
+
+                setTimeout(async () => {
+                    const asset = getCurrentAsset();
+                    const newPrice = generatePriceForAsset(asset.symbol);
+                    const oldPrice = asset.price;
+                    asset.price = newPrice;
+                    state.chartData.push(newPrice);
+                    if (state.chartData.length > 120) state.chartData.shift();
+
+                    const diff = type === 'buy' ? (newPrice - oldPrice) / oldPrice : (oldPrice - newPrice) / oldPrice;
+                    const win = diff > 0.002;
+                    const multiplier = 1 + Math.abs(diff) * 10;
+                    const profit = Math.round(amount * (multiplier - 1));
+
+                    state.totalTrades++;
+
+                    if (win) {
+                        const totalWin = amount + profit;
+                        await recordWin(totalWin, multiplier);
+                        state.totalWins++;
+                        state.history.push('win');
+                        resultMsg.className = 'result-message win';
+                        resultMsg.textContent = `✅ ${type.toUpperCase()} WIN! +${totalWin.toLocaleString()} koin (Profit +${profit.toLocaleString()})`;
+                    } else {
+                        await recordLose(amount);
+                        state.totalLoses++;
+                        state.history.push('lose');
+                        resultMsg.className = 'result-message lose';
+                        resultMsg.textContent = `❌ ${type.toUpperCase()} LOSS! -${amount.toLocaleString()} koin`;
+                    }
+
+                    state.position = null;
+                    state.entryPrice = 0;
+                    state.isTrading = false;
+                    buyBtn.disabled = false;
+                    sellBtn.disabled = false;
+
+                    updatePriceDisplay();
+                    updateOrderBook();
+                    drawChart();
+                    updateUI();
+                    updatePosition();
+                    renderAssets();
+
+                    if (state.coins < 10) {
+                        setTimeout(() => {
+                            if (confirm('💸 Saldo habis! Reset ke 10000 koin?')) {
+                                resetGame();
+                            }
+                        }, 500);
+                    }
+                }, 1200);
+            }
+
+            function resetGame() {
+                state.coins = 10000;
+                state.totalTrades = 0;
+                state.totalWins = 0;
+                state.totalLoses = 0;
+                state.history = [];
+                state.position = null;
+                state.entryPrice = 0;
+                state.isTrading = false;
+                buyBtn.disabled = false;
+                sellBtn.disabled = false;
+                resultMsg.className = 'result-message idle';
+                resultMsg.textContent = '🔄 Game direset!';
+                updateUI();
+                updatePosition();
+                renderAssets();
+            }
+
+            function setTrade(amount) {
+                if (amount > state.coins) { alert('Saldo tidak cukup!'); return; }
+                tradeAmount.value = amount;
+            }
+
+            function setChartRange(range) {
+                state.chartRange = range;
+                document.querySelectorAll('#timeframes button').forEach(b => b.classList.remove('active'));
+                document.querySelector(`#timeframes button[data-range="${range}"]`).classList.add('active');
+                generateChartData();
+                drawChart();
+                updatePriceDisplay();
+            }
+
+            // ===== EVENT LISTENERS =====
+            buyBtn.addEventListener('click', () => executeTrade('buy'));
+            sellBtn.addEventListener('click', () => executeTrade('sell'));
+            document.querySelectorAll('#timeframes button').forEach(btn => {
+                btn.addEventListener('click', () => setChartRange(btn.dataset.range));
+            });
+            tradeAmount.addEventListener('change', function() {
+                let val = parseInt(this.value) || 10;
+                if (val < 10) val = 10;
+                if (val > state.coins) val = state.coins;
+                this.value = val;
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'b' || e.key === 'B') { if (!buyBtn.disabled) executeTrade('buy'); }
+                else if (e.key === 's' || e.key === 'S') { if (!sellBtn.disabled) executeTrade('sell'); }
+            });
+            window.addEventListener('resize', drawChart);
+
+            // ===== PRICE UPDATE LOOP =====
+            function updatePrices() {
+                const asset = getCurrentAsset();
+                const newPrice = generatePriceForAsset(asset.symbol);
+                asset.price = newPrice;
+                state.chartData.push(newPrice);
+                if (state.chartData.length > 120) state.chartData.shift();
+                updateAssetChange();
+                updatePriceDisplay();
+                updateOrderBook();
+                drawChart();
+                renderAssets();
+                updateHighLow();
+                if (state.position) {
+                    const current = getCurrentAsset().price;
+                    const diff = state.position === 'buy' ? (current - state.entryPrice) / state.entryPrice : (state.entryPrice - current) / state.entryPrice;
+                    if (diff > 0.10 || diff < -0.05) {
+                        const win = diff > 0;
+                        const amount = state.tradeAmount || 100;
+                        const profit = Math.round(amount * Math.abs(diff) * 8);
+                        if (win) {
+                            state.coins += amount + profit;
+                            state.totalWins++;
+                            state.history.push('win');
+                            resultMsg.className = 'result-message win';
+                            resultMsg.textContent = `🚀 Auto close! Profit +${profit.toLocaleString()} koin`;
+                        } else {
+                            state.coins -= amount;
+                            state.totalLoses++;
+                            state.history.push('lose');
+                            resultMsg.className = 'result-message lose';
+                            resultMsg.textContent = `💀 Auto close! Loss -${amount.toLocaleString()} koin`;
+                        }
+                        state.position = null;
+                        state.entryPrice = 0;
+                        updateUI();
+                        updatePosition();
+                    }
+                    updatePosition();
+                }
+                updateUI();
+            }
+
+            // ===== INIT =====
+            window.setTrade = setTrade;
+            window.resetGame = resetGame;
+
+            initGame().then(() => {
+                renderAssets();
+                generateChartData();
+                drawChart();
+                updatePriceDisplay();
+                updateOrderBook();
+                updateUI();
+                updatePosition();
+                updateLabels();
+                updateHighLow();
+                resultMsg.textContent = '📊 Tekan B (BUY) atau S (SELL)';
+                setInterval(updatePrices, 1500);
+                setInterval(updateOrderBook, 3000);
+            });
+        })();
+    </script>
+</body>
+</html>

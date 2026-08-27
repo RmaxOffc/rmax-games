@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- style sama seperti sebelumnya, tidak diubah -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rmax Flip · Main Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: #0e0b07;
+            background-image: radial-gradient(circle at 30% 20%, #281f10 0%, #0f0b06 90%);
+            color: #ede7d7;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            width: 100%;
+            max-width: 900px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(180deg, #2b1f0f, #1a1309);
+            border-bottom: 3px solid #b8933e;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.7);
+        }
+        .header .back-btn {
+            color: #b89e6a;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 14px;
+            border: 1px solid #6e542c;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .header .back-btn:hover {
+            background: #3d2c19;
+            border-color: #dbb86c;
+            color: #f0dfb0;
+        }
+        .header .title {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, #f5e6b0, #dbb86c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .header .coin-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px 6px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #6e542c;
+            border-radius: 20px;
+        }
+        .header .coin-display .coin-icon {
+            font-size: 18px;
+        }
+        .header .coin-display .coin-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f5d742;
+        }
+
+        /* ===== GAME CONTAINER ===== */
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            background: linear-gradient(145deg, #1f150a, #2b1f0f);
+            padding: 30px 20px 40px;
+            border-radius: 0 0 12px 12px;
+            border-left: 2px solid #6e542c;
+            border-right: 2px solid #6e542c;
+            border-bottom: 2px solid #6e542c;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* ===== GAME AREA ===== */
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        /* ===== FLIP CARD ===== */
+        .flip-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 280px;
+            cursor: pointer;
+        }
+
+        .flip-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card .front,
+        .flip-card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #b8933e;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .flip-card .front {
+            background: linear-gradient(145deg, #2d1f0e, #1a1208);
+            background-image:
+                radial-gradient(circle at 30% 30%, #4a341e, #1a1208 70%);
+        }
+
+        .flip-card .front .card-back-design {
+            font-size: 80px;
+            opacity: 0.3;
+            color: #b8933e;
+            text-shadow: 0 0 30px rgba(184, 147, 62, 0.2);
+        }
+        .flip-card .front .card-label {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #6e542c;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .flip-card .back {
+            transform: rotateY(180deg);
+            background: linear-gradient(145deg, #f5e6b0, #dbb86c);
+            background-image:
+                radial-gradient(circle at 40% 40%, #fff4d6, #dbb86c 80%);
+        }
+
+        .flip-card .back .card-value {
+            font-size: 72px;
+            font-weight: 900;
+            color: #1a1208;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .flip-card .back .card-suit {
+            font-size: 40px;
+            margin-top: -5px;
+        }
+        .flip-card .back .card-label-back {
+            margin-top: 12px;
+            font-size: 11px;
+            color: #4a341e;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 16px;
+            border-radius: 20px;
+        }
+
+        /* ===== SHIMMER EFFECT ON CARD ===== */
+        .flip-card .front::before,
+        .flip-card .back::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent 50%, rgba(255, 215, 0, 0.05));
+            pointer-events: none;
+        }
+
+        /* ===== INFO PANEL ===== */
+        .info-panel {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #6e542c;
+            border-radius: 12px;
+        }
+        .info-panel .stat {
+            text-align: center;
+        }
+        .info-panel .stat .label {
+            font-size: 10px;
+            color: #b89e6a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .info-panel .stat .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f0dfb0;
+            margin-top: 2px;
+        }
+        .info-panel .stat .value.win {
+            color: #4caf50;
+        }
+        .info-panel .stat .value.lose {
+            color: #f44336;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 32px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(180deg, #a83d32, #721f1b 50%, #4d1410);
+            color: #ffeec6;
+            border: 1px solid #c9a84c;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 220, 150, 0.2);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(180deg, #c44a3c, #872520);
+            border-color: #edcf78;
+            transform: translateY(-2px);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: linear-gradient(180deg, #3d2c19, #26180a);
+            color: #b89e6a;
+            border: 1px solid #6e542c;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(180deg, #4d351d, #30200e);
+            border-color: #b89e6a;
+            transform: translateY(-2px);
+        }
+
+        /* ===== BET INPUT ===== */
+        .bet-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid #4d3d22;
+        }
+        .bet-control label {
+            font-size: 12px;
+            color: #b89e6a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .bet-control input {
+            width: 100px;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #6e542c;
+            border-radius: 6px;
+            color: #f0dfb0;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            font-family: inherit;
+        }
+        .bet-control input:focus {
+            outline: none;
+            border-color: #dbb86c;
+        }
+        .bet-control .bet-presets {
+            display: flex;
+            gap: 4px;
+        }
+        .bet-control .bet-presets button {
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #4d3d22;
+            border-radius: 4px;
+            color: #b89e6a;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .bet-control .bet-presets button:hover {
+            background: #3d2c19;
+            border-color: #b89e6a;
+            color: #f0dfb0;
+        }
+
+        /* ===== RESULT MESSAGE ===== */
+        .result-message {
+            min-height: 40px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            padding: 8px 0;
+        }
+        .result-message.win {
+            color: #4caf50;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        .result-message.lose {
+            color: #f44336;
+            text-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+        }
+        .result-message.idle {
+            color: #b89e6a;
+        }
+
+        /* ===== HISTORY ===== */
+        .history {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid #3d2c19;
+            min-height: 40px;
+        }
+        .history .dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .history .dot.win {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+        .history .dot.lose {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .header {
+                padding: 10px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .header .title {
+                font-size: 16px;
+            }
+            .header .coin-display .coin-amount {
+                font-size: 15px;
+            }
+            .flip-container {
+                width: 150px;
+                height: 210px;
+            }
+            .flip-card .back .card-value {
+                font-size: 54px;
+            }
+            .flip-card .back .card-suit {
+                font-size: 30px;
+            }
+            .flip-card .front .card-back-design {
+                font-size: 60px;
+            }
+            .info-panel {
+                gap: 15px;
+            }
+            .info-panel .stat .value {
+                font-size: 18px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            .bet-control {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .bet-control input {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="#" class="back-btn">← Kembali</a>
+        <span class="title">🎴 Rmax Flip</span>
+        <div class="coin-display">
+            <span class="coin-icon">🪙</span>
+            <span class="coin-amount" id="headerCoin">5.000</span>
+        </div>
+    </header>
+
+    <!-- ===== GAME CONTAINER ===== -->
+    <div class="game-container">
+        <div class="game-area">
+
+            <!-- FLIP CARD -->
+            <div class="flip-container" id="flipContainer">
+                <div class="flip-card" id="flipCard">
+                    <div class="front">
+                        <div class="card-back-design">♠</div>
+                        <div class="card-label">Klik untuk Flip</div>
+                    </div>
+                    <div class="back" id="cardBack">
+                        <div class="card-value" id="cardValue">?</div>
+                        <div class="card-suit" id="cardSuit">♠</div>
+                        <div class="card-label-back">Rmax Flip</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BET CONTROL -->
+            <div class="bet-control">
+                <label>Taruhan</label>
+                <input type="number" id="betAmount" value="100" min="10" step="10" />
+                <div class="bet-presets">
+                    <button onclick="setBet(50)">50</button>
+                    <button onclick="setBet(100)">100</button>
+                    <button onclick="setBet(250)">250</button>
+                    <button onclick="setBet(500)">500</button>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="btn-group">
+                <button class="btn btn-primary" id="flipBtn">🔮 Flip</button>
+                <button class="btn btn-secondary" id="resetBtn">↻ Reset</button>
+            </div>
+
+            <!-- RESULT -->
+            <div class="result-message idle" id="resultMessage">Klik Flip untuk mulai</div>
+
+            <!-- STATS -->
+            <div class="info-panel">
+                <div class="stat">
+                    <div class="label">Total Main</div>
+                    <div class="value" id="totalGames">0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Menang</div>
+                    <div class="value win" id="totalWins">0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Kalah</div>
+                    <div class="value lose" id="totalLoses">0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Win Rate</div>
+                    <div class="value" id="winRate">0%</div>
+                </div>
+            </div>
+
+            <!-- HISTORY -->
+            <div class="history" id="history"></div>
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ===== STATE =====
+            let state = {
+                coins: 5000,
+                bet: 100,
+                totalGames: 0,
+                totalWins: 0,
+                totalLoses: 0,
+                history: [],
+                isFlipping: false,
+                currentResult: null,
+                winChance: 50,
+                userId: null
+            };
+
+            // ===== DOM REFS =====
+            const flipCard = document.getElementById('flipCard');
+            const flipContainer = document.getElementById('flipContainer');
+            const flipBtn = document.getElementById('flipBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const betInput = document.getElementById('betAmount');
+            const resultMsg = document.getElementById('resultMessage');
+            const cardValue = document.getElementById('cardValue');
+            const cardSuit = document.getElementById('cardSuit');
+            const headerCoin = document.getElementById('headerCoin');
+            const totalGamesEl = document.getElementById('totalGames');
+            const totalWinsEl = document.getElementById('totalWins');
+            const totalLosesEl = document.getElementById('totalLoses');
+            const winRateEl = document.getElementById('winRate');
+            const historyEl = document.getElementById('history');
+
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+            function getRandomCard() {
+                const suit = suits[Math.floor(Math.random() * suits.length)];
+                const value = values[Math.floor(Math.random() * values.length)];
+                return { suit, value };
+            }
+
+            function formatNumber(num) {
+                return num.toLocaleString();
+            }
+
+            // ===== API FUNCTIONS =====
+            async function initGame() {
+                try {
+                    const userRes = await fetch('/api/user', { credentials: 'include' });
+                    if (!userRes.ok) {
+                        alert('Silakan login!');
+                        window.location.href = '/';
+                        return;
+                    }
+                    const user = await userRes.json();
+                    state.userId = user.id;
+                    state.coins = user.coins;
+                    headerCoin.textContent = state.coins.toLocaleString();
+
+                    const settingRes = await fetch('/api/settings/flip', { credentials: 'include' });
+                    if (settingRes.ok) {
+                        const setting = await settingRes.json();
+                        state.winChance = setting.win_chance || 50;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                updateUI();
+            }
+
+            async function placeBet(amount) {
+                const res = await fetch('/api/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'flip', amount })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error);
+                state.coins = data.newBalance;
+                headerCoin.textContent = state.coins.toLocaleString();
+                return data;
+            }
+
+            async function recordWin(amount, multiplier) {
+                const res = await fetch('/api/win', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'flip', amount, multiplier })
+                });
+                const data = await res.json();
+                if (data.newBalance !== undefined) {
+                    state.coins = data.newBalance;
+                    headerCoin.textContent = state.coins.toLocaleString();
+                }
+            }
+
+            async function recordLose(betAmount) {
+                await fetch('/api/lose', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game: 'flip', betAmount })
+                });
+            }
+
+            // ===== UPDATE UI =====
+            function updateUI() {
+                headerCoin.textContent = state.coins.toLocaleString();
+                totalGamesEl.textContent = state.totalGames;
+                totalWinsEl.textContent = state.totalWins;
+                totalLosesEl.textContent = state.totalLoses;
+                const rate = state.totalGames > 0 ? Math.round((state.totalWins / state.totalGames) * 100) : 0;
+                winRateEl.textContent = rate + '%';
+                historyEl.innerHTML = '';
+                const recent = state.history.slice(-20);
+                recent.forEach(result => {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot ' + result;
+                    dot.textContent = result === 'win' ? '✓' : '✗';
+                    historyEl.appendChild(dot);
+                });
+                betInput.value = state.bet;
+            }
+
+            // ===== FLIP LOGIC =====
+            async function doFlip() {
+                if (state.isFlipping) return;
+
+                const bet = parseInt(betInput.value) || 100;
+                if (bet < 10) {
+                    alert('Taruhan minimal 10 koin!');
+                    return;
+                }
+                if (bet > state.coins) {
+                    alert('Saldo tidak cukup!');
+                    return;
+                }
+
+                state.bet = bet;
+                state.isFlipping = true;
+                flipBtn.disabled = true;
+                resultMsg.className = 'result-message idle';
+                resultMsg.textContent = '🔄 Memutar...';
+
+                // Reset card
+                flipCard.classList.remove('flipped');
+                cardValue.textContent = '?';
+                cardSuit.textContent = '♠';
+
+                // Panggil API bet
+                try {
+                    await placeBet(bet);
+                } catch (err) {
+                    alert(err.message);
+                    state.isFlipping = false;
+                    flipBtn.disabled = false;
+                    return;
+                }
+
+                // Simulasi delay
+                setTimeout(async () => {
+                    // Tentukan menang/kalah berdasarkan winChance
+                    const win = Math.random() * 100 < state.winChance;
+                    const card = getRandomCard();
+
+                    // Tampilkan kartu
+                    cardValue.textContent = card.value;
+                    cardSuit.textContent = card.suit;
+                    const isRed = card.suit === '♥' || card.suit === '♦';
+                    cardValue.style.color = isRed ? '#cc0000' : '#1a1208';
+                    cardSuit.style.color = isRed ? '#cc0000' : '#1a1208';
+                    flipCard.classList.add('flipped');
+
+                    state.totalGames++;
+
+                    if (win) {
+                        const winAmount = bet * 2;
+                        await recordWin(winAmount, 2);
+                        state.totalWins++;
+                        state.history.push('win');
+                        resultMsg.className = 'result-message win';
+                        resultMsg.textContent = `🎉 MENANG! +${formatNumber(winAmount)} koin! (${card.value}${card.suit})`;
+                    } else {
+                        await recordLose(bet);
+                        state.totalLoses++;
+                        state.history.push('lose');
+                        resultMsg.className = 'result-message lose';
+                        resultMsg.textContent = `😢 KALAH! -${formatNumber(bet)} koin (${card.value}${card.suit})`;
+                    }
+
+                    state.currentResult = win ? 'win' : 'lose';
+                    state.isFlipping = false;
+                    flipBtn.disabled = false;
+                    updateUI();
+
+                    if (state.coins < 10) {
+                        setTimeout(() => {
+                            if (confirm('💸 Saldo habis! Mau reset ke 5000 koin?')) {
+                                resetGame();
+                            }
+                        }, 500);
+                    }
+                }, 800);
+            }
+
+            function resetGame() {
+                state.coins = 5000;
+                state.totalGames = 0;
+                state.totalWins = 0;
+                state.totalLoses = 0;
+                state.history = [];
+                state.isFlipping = false;
+                flipBtn.disabled = false;
+                flipCard.classList.remove('flipped');
+                cardValue.textContent = '?';
+                cardSuit.textContent = '♠';
+                cardValue.style.color = '#1a1208';
+                cardSuit.style.color = '#1a1208';
+                resultMsg.className = 'result-message idle';
+                resultMsg.textContent = 'Game direset!';
+                updateUI();
+            }
+
+            function setBet(amount) {
+                if (amount > state.coins) {
+                    alert('Saldo tidak cukup!');
+                    return;
+                }
+                state.bet = amount;
+                betInput.value = amount;
+            }
+
+            // ===== EVENT LISTENERS =====
+            flipBtn.addEventListener('click', doFlip);
+            flipContainer.addEventListener('click', doFlip);
+            resetBtn.addEventListener('click', resetGame);
+            betInput.addEventListener('change', function() {
+                let val = parseInt(this.value) || 10;
+                if (val < 10) val = 10;
+                if (val > state.coins) val = state.coins;
+                state.bet = val;
+                this.value = val;
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !state.isFlipping) {
+                    doFlip();
+                }
+            });
+
+            // ===== INIT =====
+            initGame();
+            window.setBet = setBet;
+            window.resetGame = resetGame;
+        })();
+    </script>
+</body>
+</html>
